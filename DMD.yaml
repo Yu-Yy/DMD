@@ -1,0 +1,36 @@
+NoMP: 44.636115
+batch_size: 16
+ckp_dir: ./logs_mnt/denseB/20240221110742
+comments: DensePrint(dense)
+crop_shape:
+- 128
+- 128
+data_name: mnts
+debug: false
+img_ppi: 500
+loss_attrs:
+  cosface:
+  - 1
+  dense:
+  - 0.00125
+  mask:
+  - 1
+  minu:
+  - 0.01
+lr: 0.00035
+middle_shape:
+- 128
+- 128
+minu_shape:
+- 64
+- 64
+ndim_feat: 6
+pos_embed: true
+prefix: /disk2/panzhiyu/fingerprint/
+start_epoch: 0
+tar_shape:
+- 128
+- 128
+
+eval_path: logs/DMD
+eval_dataset: 'NIST27'
