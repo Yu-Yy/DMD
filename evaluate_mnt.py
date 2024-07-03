@@ -568,7 +568,7 @@ def relax_labeling(mnts1, mnts2, scores, pairs, n_pair, with_pose=False): #
 
 
 if __name__ == "__main__":
-    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     term = 'latent'
     processes = {
         'rolled': 24,

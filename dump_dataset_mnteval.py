@@ -1,13 +1,14 @@
 """
 This file (dump_dataset.py) is designed for:
-    dump dataset for deepprint training
-Copyright (c) 2022, Yongjie Duan. All rights reserved.
+    dump dataset for DMD evaluating
+Copyright (c) 2024, Zhiyu Pan. All rights reserved.
 """
 import os
 import os.path as osp
 import pickle
 import random
 import numpy as np
+import argparse
 
 from fptools import fp_verifinger
 area_thresh = 40000
@@ -42,10 +43,12 @@ def create_datalist(prefix, dataname, img_type='bmp'):
 if __name__ == "__main__":
     random.seed(1016)
     np.random.seed(1016)
+    parser = argparse.ArgumentParser("Evaluation for DMD")
+    parser.add_argument("--prefix", type=str, default="/disk2/panzhiyu/fingerprint/")
+    args = parser.parse_args()
     save_file = './datasets/NISTmnt_eval.pkl'
-    prefix = "/disk2/panzhiyu/fingerprint/"
     NIST_Seris_dict = {}
-    datalist = create_datalist(prefix, "NIST27_sta")
+    datalist = create_datalist(args.prefix, "NIST27_sta")
     datalist = [dict(zip(datalist, v)) for v in zip(*datalist.values())]
     NIST_Seris_dict["NIST27"] = datalist
     # save the data
