@@ -4,11 +4,6 @@ import pandas as pd
 from sklearn import metrics
 
 def rank1_value(score_mat, data_name="NIST14"):
-    # read the csv file and get the rank1 value
-    # df = pd.read_csv(score_file)
-    # # get the matrix value except the index and column title
-    # score_mat = df.iloc[:,1:].values
-    # get the rank1 value
     rank1 = np.argmax(score_mat, axis=1)
     target = np.arange(len(rank1))
     # judge if the rank1 is the correct value
@@ -27,8 +22,6 @@ def rank1_value(score_mat, data_name="NIST14"):
     return rank1_value, rank10_value
 
 def TAR(score_mat, th=0.0001, data_name="NIST14"):
-    # df = pd.read_csv(score_file)
-    # score_mat = df.iloc[:,1:].values  
     # calculate the tar@far=0.1% 
     target = np.eye(score_mat.shape[0])
     # extend the zeros to the axis 1
@@ -41,15 +34,6 @@ def TAR(score_mat, th=0.0001, data_name="NIST14"):
     print(f"{data_name}: tar@far={th * 100}% is {tar_01 * 100:.2f}%")
     return tar_01 #far, tar, thresholds
 
-    # for i, scores in enumerate(score_mat):
-    #     # label is i idx is 1 and other is 0
-    #     label = np.zeros(len(scores))
-    #     label[i] = 1
-    #     far, tar, thresholds = metrics.roc_curve(label, scores)
-    #     # find the far=0.1% and get the tar
-    #     far_01 = np.where(far <= 0.001)[0][-1]
-    #     tar_01 = tar[far_01]
-
 def draw_roc(*args):
     labels_lab = ["DensePrint", "DensePrint_mini"]
     import matplotlib.pyplot as plt
@@ -58,13 +42,3 @@ def draw_roc(*args):
         plt.plot(args[i][0], args[i][1], label=labels_lab[i])
     plt.legend()
     plt.savefig("roc.png") 
-
-
-if __name__ == '__main__':
-    # score_file = "/disk2/panzhiyu/fingerprint/NIST14/fingernet/DensePrint_feat_score_matrix.csv"
-    # # rank1_value(score_file)
-    # wrap_1 = TAR(score_file)
-    score_file = "/disk2/panzhiyu/fingerprint/NIST27/fingernet/DensePrint_womnt_NIST4_trip_feat_score_matrix.csv"
-    rank1 = rank1_value(score_file)
-    wrap_2 = TAR(score_file, th=0.001) # th is 0.0001 for plain and roll and 0.001 for latent
-    # draw_roc(wrap_1, wrap_2)

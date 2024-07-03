@@ -79,6 +79,11 @@ Run the script:
 python dump_dataset_mnteval.py --prefix /path/to/dataset
 ```
 
+## Evaluating
+Run the script:
+```
+python evaluate_mnt.py
+```
+
 ## License
 Code related to the DMD is under Apache 2.0 license.
-
