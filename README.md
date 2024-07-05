@@ -87,3 +87,14 @@ python evaluate_mnt.py
 
 ## License
 Code related to the DMD is under Apache 2.0 license.
+
+## Citation
+If you find our repo helpful, please consider leaving a star or cite our paper :)
+```
+@article{pan2024latent,
+  title={Latent Fingerprint Matching via Dense Minutia Descriptor},
+  author={Pan, Zhiyu and Duan, Yongjie and Guan, Xiongjun and Feng, Jianjiang and Zhou, Jie},
+  journal={arXiv preprint arXiv:2405.01199},
+  year={2024}
+}
+```
