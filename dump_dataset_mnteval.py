@@ -23,16 +23,15 @@ def create_datalist(prefix, dataname, img_type='bmp'):
     mnt_gallery_files = os.listdir(mnt_gallery_folder)
     mnt_query_files = os.listdir(mnt_query_folder)
     for mnt_f in mnt_gallery_files: 
-        mnts = fp_verifinger.load_minutiae(osp.join(mnt_gallery_folder, mnt_f))[:, :3]
+        # This can be loaded by other functions for specific minutia files; just make sure the first three columns of mnts are (x, y, theta).
+        mnts = fp_verifinger.load_minutiae(osp.join(mnt_gallery_folder, mnt_f))[:, :3] # [N, 3] (x, y, theta), theta in clockwise
         for mnt_ in mnts: # one mnt per sample
-            # search part
-            img_lst.append(osp.join(f"{dataname}", "image", 'gallery', mnt_f.split('.')[0] + f".{img_type}")) # list 对齐
+            img_lst.append(osp.join(f"{dataname}", "image", 'gallery', mnt_f.split('.')[0] + f".{img_type}")) 
             anchor_2d.append(mnt_)
 
     for mnt_f in mnt_query_files: 
         mnts = fp_verifinger.load_minutiae(osp.join(mnt_query_folder, mnt_f))[:, :3]
         for mnt_ in mnts:
-            # search part
             img_lst.append(osp.join(f"{dataname}", "image", 'query', mnt_f.split('.')[0] + f".{img_type}"))
             anchor_2d.append(mnt_)
 
@@ -44,11 +43,11 @@ if __name__ == "__main__":
     random.seed(1016)
     np.random.seed(1016)
     parser = argparse.ArgumentParser("Evaluation for DMD")
-    parser.add_argument("--prefix", type=str, default="/disk2/panzhiyu/fingerprint/")
+    parser.add_argument("--prefix", type=str, default="/path/to/datasets/")
     args = parser.parse_args()
     save_file = './datasets/NISTmnt_eval.pkl'
     NIST_Seris_dict = {}
-    datalist = create_datalist(args.prefix, "NIST27_sta")
+    datalist = create_datalist(args.prefix, "NIST27")
     datalist = [dict(zip(datalist, v)) for v in zip(*datalist.values())]
     NIST_Seris_dict["NIST27"] = datalist
     # save the data

@@ -1,6 +1,6 @@
 NoMP: 44.636115
 batch_size: 16
-comments: DensePrint(dense)
+comments: DMD(Dense_Minutia_Descriptor)
 crop_shape:
 - 128
 - 128
@@ -24,7 +24,7 @@ minu_shape:
 - 64
 ndim_feat: 6
 pos_embed: true
-prefix: /path/to/dataset
+prefix: /path/to/datasets
 tar_shape:
 - 128
 - 128

@@ -16,7 +16,7 @@ from .units import *
 
 class NOP(nn.Module):
     def forward(self, x):
-        return x  # 不改变输入直接返回
+        return x  
 
 class DensePrintB(nn.Module):
     def __init__(self, num_in=1, ndim_feat=6, pos_embed=True, tar_shape = (256, 256)):
