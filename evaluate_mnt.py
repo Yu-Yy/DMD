@@ -471,13 +471,13 @@ def k_largest_index_argpartition(a, k):
 
 def distance_theta(theta, theta2=None):
     theta2 = theta if theta2 is None else theta2
-    d = np.abs(theta[:, None] - theta2[None] + 180) % 360 - 180
+    d = (theta[:, None] - theta2[None] + 180) % 360 - 180
     return d
 
 def distance_R(mnts):
     d = np.rad2deg(np.arctan2(mnts[:, 1, None] - mnts[None, :, 1], mnts[None, :, 0] - mnts[:, 0, None]))
-    d = np.abs(mnts[:, 2, None] + d + 180) % 360 - 180
-    return np.abs(d)
+    d = (mnts[:, 2, None] + d + 180) % 360 - 180
+    return d
 
 def lsa_score(S, min_pair=4, max_pair=12, mu_p=20, tau_p=0.4):
     '''
@@ -532,7 +532,7 @@ def compute_pose_constaints(mnts1, mnts2):
     return mask, dist
 
 def relax_labeling(mnts1, mnts2, scores, pairs, n_pair, with_pose=False): #
-
+    
     mu_1 = 5
     mu_2 = np.pi / 12
     mu_3 = np.pi / 12
@@ -545,8 +545,8 @@ def relax_labeling(mnts1, mnts2, scores, pairs, n_pair, with_pose=False): #
     mnts1 = mnts1[pairs[:, 0]]
     mnts2 = mnts2[pairs[:, 1]]
     D1 = np.abs(distance.squareform(distance.pdist(mnts1[:, :2])) - distance.squareform(distance.pdist(mnts2[:, :2])))
-    D2 = np.deg2rad(np.abs(distance_theta(mnts1[:, 2]) - distance_theta(mnts2[:, 2])))
-    D3 = np.deg2rad(np.abs(distance_R(mnts1[:, :3]) - distance_R(mnts2[:, :3])))
+    D2 = np.deg2rad(np.abs((distance_theta(mnts1[:, 2]) - distance_theta(mnts2[:, 2]) + 180) % 360 - 180))  
+    D3 = np.deg2rad(np.abs((distance_R(mnts1[:, :3]) - distance_R(mnts2[:, :3]) + 180) % 360 - 180))
     lambda_t = scores
     rp = (
         sigmoid(D1, mu_1, tau_1)
