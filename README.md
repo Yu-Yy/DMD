@@ -86,7 +86,7 @@ python evaluate_mnt.py
 ```
 
 ## License and Usage Restrictions
-Code related to the DMD is under Apache 2.0 license. 
+Code related to the DMD is under Apache 2.0 license. \
 **This project is intended for academic research purposes only and cannot be used for commercial purposes.**
 
 ## Citation
