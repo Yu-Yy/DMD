@@ -64,7 +64,7 @@ class MntDataset(Dataset):
             matches,
             minu=minu,
             p_center=pose_2d[:2],
-            p_theta=np.deg2rad(pose_2d[2]),
+            p_theta=np.deg2rad(pose_2d[2]), # in clockwise for positive
             t_scale=self.scale,
             t_shift=shift,
             t_rotation=-np.deg2rad(rot),
@@ -83,6 +83,80 @@ class MntDataset(Dataset):
         img_r, _, _, _, _ = self._processing_(img, minu, pose_2d)
         img_r = (img_r - 127.5) / 127.5
 
+        return {
+            "img_r": img_r[None].astype(np.float32),
+            'minu_r': pose_2d,
+            'index': index,
+            "name": path,
+        }
+
+
+class VirtDataset(Dataset):
+    def __init__(
+        self,
+        prefix,
+        pkl_path,
+        img_ppi=500,
+        tar_shape=(299, 299),
+        middle_shape=(512, 512),
+        dataname="NIST4",
+    ) -> None:
+        super().__init__()
+        self.prefix = prefix
+        self.pkl_path = pkl_path
+        self.img_ppi = img_ppi
+        self.tar_shape = np.array(tar_shape)
+        self.middle_shape = np.array(middle_shape)
+        self.scale = self.img_ppi * 1.0 / 500 * self.tar_shape[0] / self.middle_shape[0]
+
+        with open(pkl_path, "rb") as fp:
+            items = pickle.load(fp)
+            self.items = items[dataname]['datalist'] # 以细节点为主导
+            self.count_number = items[dataname]["count_list"]
+
+    def load_img(self, img_path):
+        img = np.asarray(cv2.imread(img_path, cv2.IMREAD_GRAYSCALE), dtype=np.float32)
+        return img
+
+    def __len__(self):
+        return self.count_number[-1]
+
+    def _processing_(self, img, minu, pose_2d):
+        rot = 0
+        shift = np.zeros(2)
+        flow = np.zeros(198)
+        center = self.tar_shape[::-1] / 2.0
+
+        # TPS deformation
+        matches = [cv2.DMatch(ii, ii, 0) for ii in range(len(flow) // 2)]
+        tps_pts, minu = fast_tps_distortion(
+            img.shape,
+            self.tar_shape,
+            flow,
+            matches,
+            minu=minu,
+            p_center=pose_2d[:2],
+            p_theta=np.deg2rad(pose_2d[2]), # in clockwise for positive
+            t_scale=self.scale,
+            t_shift=shift,
+            t_rotation=-np.deg2rad(rot),
+        )
+
+        img = cv2.remap(img, tps_pts[..., 0], tps_pts[..., 1], cv2.INTER_LINEAR, borderValue=127.5)
+
+        return img, minu, center, shift, rot
+
+    def __getitem__(self, index):
+        # parse the image_idx and the anchor_idx
+        img_idx = np.where(self.count_number > index)[0][0] - 1
+        anchor_idx = index - self.count_number[img_idx]
+        item = self.items[img_idx]
+        img = self.load_img(osp.join(self.prefix, item["img"]))
+        pose_2d = np.loadtxt(osp.join(self.prefix, item["pose_2d"]), dtype=np.float32)[anchor_idx,:] # (x, y, theta) # in clockwise
+        minu = None
+        path = "/".join(item["img"].split("/")[-3:]).split(".")[0]
+        img_r, _, _, _, _ = self._processing_(img, minu, pose_2d)
+        img_r = (img_r - 127.5) / 127.5
         return {
             "img_r": img_r[None].astype(np.float32),
             'minu_r': pose_2d,
@@ -163,3 +237,79 @@ def fast_tps_distortion(
 def normlization_angle(delta):
     delta = np.abs(delta) % 360
     return np.deg2rad(np.minimum(delta, 360 - delta))
+
+from itertools import product
+import pickle
+import os
+from tqdm import tqdm
+# dataloader for LSRA-matching
+class MatchDataset(Dataset):
+    def __init__(self, feat_folder) -> None:
+        super().__init__()
+        self.feat_folder = feat_folder
+        self.search_folder = osp.join(feat_folder, "search")
+        self.gallery_folder = osp.join(feat_folder, "gallery")
+        # search and gallery list
+        self.search_list = os.listdir(self.search_folder)
+        self.search_list.sort()
+        self.gallery_list = os.listdir(self.gallery_folder)
+        self.gallery_list.sort()        
+        # get the combination of search and gallery
+        self.items = list(product(self.search_list, self.gallery_list))
+        # get the max mnt number, for padding
+
+        # self.max_mnt_num_search = 0
+        # print("Calculating the max mnt number for search and gallery")
+        # for s_file in tqdm(self.search_list):
+        #     s_feat = pickle.load(open(osp.join(self.search_folder, s_file), "rb"))
+        #     self.max_mnt_num_search = max(self.max_mnt_num_search, s_feat["mnt"].shape[0])
+        # self.max_mnt_num_gallery = 0
+        # for g_file in tqdm(self.gallery_list):
+        #     g_feat = pickle.load(open(osp.join(self.gallery_folder, g_file), "rb"))
+        #     self.max_mnt_num_gallery = max(self.max_mnt_num_gallery, g_feat["mnt"].shape[0])
+
+    def load_img(self, img_path):
+        img = np.asarray(cv2.imread(img_path, cv2.IMREAD_GRAYSCALE), dtype=np.float32)
+        return img
+
+    def __len__(self):
+        return len(self.items)
+
+    def __getitem__(self, index):
+        current_item = self.items[index]
+        search_feat = pickle.load(open(osp.join(self.search_folder, current_item[0]), "rb"))
+        gallery_feat = pickle.load(open(osp.join(self.gallery_folder, current_item[1]), "rb"))
+        # get the index of search and gallery of the original list
+        index_search = self.search_list.index(current_item[0])
+        index_gallery = self.gallery_list.index(current_item[1])
+        index_pair = np.array([index_search, index_gallery])
+
+        search_feat_mask = search_feat["mask"]
+        gallery_feat_mask = gallery_feat["mask"]
+        search_feat_mnt = search_feat["mnt"]
+        gallery_feat_mnt = gallery_feat["mnt"]
+        search_feat_desc = search_feat["feat"]
+        gallery_feat_desc = gallery_feat["feat"]
+        # # padding for search and gallery, padding the np.nan
+        # search_feat_mnt = np.pad(search_feat_mnt, ((0, self.max_mnt_num_search - search_feat_mnt.shape[0]), (0, 0)), "constant", constant_values=np.nan)
+        # gallery_feat_mnt = np.pad(gallery_feat_mnt, ((0, self.max_mnt_num_gallery - gallery_feat_mnt.shape[0]), (0, 0)), "constant", constant_values=np.nan)
+        # search_feat_desc = np.pad(search_feat_desc, ((0, self.max_mnt_num_search - search_feat_desc.shape[0]), (0, 0)), "constant", constant_values=np.nan)
+        # gallery_feat_desc = np.pad(gallery_feat_desc, ((0, self.max_mnt_num_gallery - gallery_feat_desc.shape[0]), (0, 0)), "constant", constant_values=np.nan)
+        # search_feat_mask = np.pad(search_feat_mask, ((0, self.max_mnt_num_search - search_feat_mask.shape[0]), (0, 0)), "constant", constant_values=np.nan)
+        # gallery_feat_mask = np.pad(gallery_feat_mask, ((0, self.max_mnt_num_gallery - gallery_feat_mask.shape[0]), (0, 0)), "constant", constant_values=np.nan)
+        return {
+            "search_mnt": search_feat_mnt,
+            "gallery_mnt": gallery_feat_mnt,
+            "search_desc": search_feat_desc,
+            "gallery_desc": gallery_feat_desc,
+            "search_mask": search_feat_mask,
+            "gallery_mask": gallery_feat_mask,
+            "index": index_pair,
+        }
+
+if __name__ == "__main__":
+    folder = "/disk2/panzhiyu/fingerprint/NIST_SD27/DMD_6"
+    dataset = MatchDataset(folder)
+    print(len(dataset))
+    output_dict = dataset[0]
+    import pdb; pdb.set_trace()

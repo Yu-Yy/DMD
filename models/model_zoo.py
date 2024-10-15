@@ -18,7 +18,7 @@ class NOP(nn.Module):
     def forward(self, x):
         return x  
 
-class DensePrintB(nn.Module):
+class DMD(nn.Module):
     def __init__(self, num_in=1, ndim_feat=6, pos_embed=True, tar_shape = (256, 256)):
         super().__init__()
         self.num_in = num_in  # number of input channel
@@ -39,6 +39,7 @@ class DensePrintB(nn.Module):
             nn.BatchNorm2d(self.inplanes),
             nn.LeakyReLU(inplace=True),
         )
+        
         self.layer1 = self._make_layers(block, num_layers[0], layers[0])
         self.layer2 = self._make_layers(block, num_layers[1], layers[1], stride=2)
         self.layer3 = self._make_layers(block, num_layers[2], layers[2], stride=2)

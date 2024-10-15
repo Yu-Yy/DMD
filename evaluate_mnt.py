@@ -157,7 +157,7 @@ class Evaluator:
         if is_load:
             # model
             try:
-                model = DensePrintB(
+                model = DMD(
                     ndim_feat=self.ndim_feat, pos_embed=self.pos_embed, tar_shape=self.tar_shape,
                 )
             except Exception as ex:
