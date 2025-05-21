@@ -1,13 +1,11 @@
 """
 This file (model_zoo.py) is designed for:
     models
-Copyright (c) 2024, Zhiyu Pan. All rights reserved.
+Copyright (c) 2025, Zhiyu Pan. All rights reserved.
 """
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import torch.utils.model_zoo as model_zoo
 import copy
 
 from . import resnet
@@ -19,11 +17,11 @@ class NOP(nn.Module):
         return x  
 
 class DMD(nn.Module):
-    def __init__(self, num_in=1, ndim_feat=6, pos_embed=True, tar_shape = (256, 256)):
+    def __init__(self, num_in=1, ndim_feat=6, pos_embed=True, input_norm=False, tar_shape = (256, 256)):
         super().__init__()
         self.num_in = num_in  # number of input channel
         self.ndim_feat = ndim_feat  # number of latent dimension
-
+        self.input_norm = input_norm
         self.tar_shape = tar_shape
         layers = [3, 4, 6, 3]
         self.base_width = 64
@@ -31,6 +29,7 @@ class DMD(nn.Module):
         block = resnet.BasicBlock
 
         self.inplanes = num_layers[0]
+        self.img_norm = NormalizeModule(m0=0, var0=1)
         self.layer0 = nn.Sequential(
             nn.Conv2d(num_in, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False),
             nn.BatchNorm2d(self.inplanes),
@@ -118,6 +117,8 @@ class DMD(nn.Module):
         return nn.Sequential(*layers)
 
     def get_embedding(self, x):
+        if self.input_norm:
+            x = self.img_norm(x) # adding the normalization layer (no traineable parameters)
         x0 = self.layer0(x)
         x1 = self.layer1(x0)
         x2 = self.layer2(x1)
@@ -139,6 +140,8 @@ class DMD(nn.Module):
         }
 
     def forward(self, x):
+        if self.input_norm:
+            x = self.img_norm(x) # adding the normalization layer (no traineable parameters)
         x0 = self.layer0(x)
         x1 = self.layer1(x0)
         x2 = self.layer2(x1)

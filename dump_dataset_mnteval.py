@@ -1,5 +1,5 @@
 """
-This file (dump_dataset.py) is designed for:
+This file (dump_dataset_mnteval.py) is designed for:
     dump dataset for DMD evaluating
 Copyright (c) 2024, Zhiyu Pan. All rights reserved.
 """
@@ -43,16 +43,12 @@ if __name__ == "__main__":
     random.seed(1016)
     np.random.seed(1016)
     parser = argparse.ArgumentParser("Evaluation for DMD")
-    parser.add_argument("--prefix", type=str, default="/disk2/panzhiyu/fingerprint")
+    parser.add_argument("--prefix", type=str, default="/path/to/TEST_DATA")
     args = parser.parse_args()
     # # the NIST series dataset
-    save_file = './datasets/NISTmnt_eval.pkl'
-    datasets = ['NIST_SD27', 'NIST_SD27_myenh3', 'N2NLatent', "NIST_SD4", "N2NPlain"] # 
-    img_types = ['bmp','bmp', 'bmp', 'bmp', 'png'] #
-    # the others (FVC, PolyU, etc.)
-    # save_file = './datasets/mnt_eval.pkl'
-    # datasets = ['PolyU','FVC06DB1', 'FVC04DB1', 'FVC02DB3', 'DPF']
-    # img_types = ['tif','bmp','tif','tif', 'png']
+    save_file = './datasets/NIST_eval_mnt.pkl'
+    datasets = ['NIST_SD27', "NIST_SD4"] # 
+    img_types = ['bmp', 'bmp'] #
     NIST_Seris_dict = {}
     for dataset, img_type in zip(datasets, img_types):
         datalist = create_datalist(args.prefix, dataset, img_type)

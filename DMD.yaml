@@ -21,9 +21,9 @@ minu_shape:
 - 64
 ndim_feat: 6
 pos_embed: true
-prefix: /disk2/panzhiyu/fingerprint
+prefix: /path/to/TEST_DATA
 tar_shape:
 - 128
 - 128
 eval_path: logs/DMD
-#eval_dataset: 'NIST_SD27'
+input_norm: False

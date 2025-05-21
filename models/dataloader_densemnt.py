@@ -39,7 +39,7 @@ class MntDataset(Dataset):
 
         with open(pkl_path, "rb") as fp:
             items = pickle.load(fp)
-            self.items = items[dataname] # 以细节点为主导
+            self.items = items[dataname] 
 
 
     def load_img(self, img_path):
@@ -258,16 +258,6 @@ class MatchDataset(Dataset):
         self.items = list(product(self.search_list, self.gallery_list))
         # get the max mnt number, for padding
 
-        # self.max_mnt_num_search = 0
-        # print("Calculating the max mnt number for search and gallery")
-        # for s_file in tqdm(self.search_list):
-        #     s_feat = pickle.load(open(osp.join(self.search_folder, s_file), "rb"))
-        #     self.max_mnt_num_search = max(self.max_mnt_num_search, s_feat["mnt"].shape[0])
-        # self.max_mnt_num_gallery = 0
-        # for g_file in tqdm(self.gallery_list):
-        #     g_feat = pickle.load(open(osp.join(self.gallery_folder, g_file), "rb"))
-        #     self.max_mnt_num_gallery = max(self.max_mnt_num_gallery, g_feat["mnt"].shape[0])
-
     def load_img(self, img_path):
         img = np.asarray(cv2.imread(img_path, cv2.IMREAD_GRAYSCALE), dtype=np.float32)
         return img
@@ -291,12 +281,6 @@ class MatchDataset(Dataset):
         search_feat_desc = search_feat["feat"]
         gallery_feat_desc = gallery_feat["feat"]
         # # padding for search and gallery, padding the np.nan
-        # search_feat_mnt = np.pad(search_feat_mnt, ((0, self.max_mnt_num_search - search_feat_mnt.shape[0]), (0, 0)), "constant", constant_values=np.nan)
-        # gallery_feat_mnt = np.pad(gallery_feat_mnt, ((0, self.max_mnt_num_gallery - gallery_feat_mnt.shape[0]), (0, 0)), "constant", constant_values=np.nan)
-        # search_feat_desc = np.pad(search_feat_desc, ((0, self.max_mnt_num_search - search_feat_desc.shape[0]), (0, 0)), "constant", constant_values=np.nan)
-        # gallery_feat_desc = np.pad(gallery_feat_desc, ((0, self.max_mnt_num_gallery - gallery_feat_desc.shape[0]), (0, 0)), "constant", constant_values=np.nan)
-        # search_feat_mask = np.pad(search_feat_mask, ((0, self.max_mnt_num_search - search_feat_mask.shape[0]), (0, 0)), "constant", constant_values=np.nan)
-        # gallery_feat_mask = np.pad(gallery_feat_mask, ((0, self.max_mnt_num_gallery - gallery_feat_mask.shape[0]), (0, 0)), "constant", constant_values=np.nan)
         return {
             "search_mnt": search_feat_mnt,
             "gallery_mnt": gallery_feat_mnt,
@@ -306,10 +290,3 @@ class MatchDataset(Dataset):
             "gallery_mask": gallery_feat_mask,
             "index": index_pair,
         }
-
-if __name__ == "__main__":
-    folder = "/disk2/panzhiyu/fingerprint/NIST_SD27/DMD_6"
-    dataset = MatchDataset(folder)
-    print(len(dataset))
-    output_dict = dataset[0]
-    import pdb; pdb.set_trace()
