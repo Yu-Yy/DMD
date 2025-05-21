@@ -45,7 +45,7 @@ We recommend running the code on a Linux system with an NVIDIA GPU. Other config
 
 Install the `torch_linear_assignment` library by compiling it from source as described in the [official repository](https://github.com/ivan-chai/torch-linear-assignment).
 
-Download the `fptools` library to the root directory of this project:
+Download the './fptools' folder to the root directory of this project:
 ```bash
 git clone https://github.com/youngjetduan/fptools.git
 ````
