@@ -38,8 +38,7 @@ class MntDataset(Dataset):
         self.scale = self.img_ppi * 1.0 / 500 * self.tar_shape[0] / self.middle_shape[0]
 
         with open(pkl_path, "rb") as fp:
-            items = pickle.load(fp)
-            self.items = items[dataname] 
+            self.items = pickle.load(fp)
 
 
     def load_img(self, img_path):
@@ -83,80 +82,6 @@ class MntDataset(Dataset):
         img_r, _, _, _, _ = self._processing_(img, minu, pose_2d)
         img_r = (img_r - 127.5) / 127.5
 
-        return {
-            "img_r": img_r[None].astype(np.float32),
-            'minu_r': pose_2d,
-            'index': index,
-            "name": path,
-        }
-
-
-class VirtDataset(Dataset):
-    def __init__(
-        self,
-        prefix,
-        pkl_path,
-        img_ppi=500,
-        tar_shape=(299, 299),
-        middle_shape=(512, 512),
-        dataname="NIST4",
-    ) -> None:
-        super().__init__()
-        self.prefix = prefix
-        self.pkl_path = pkl_path
-        self.img_ppi = img_ppi
-        self.tar_shape = np.array(tar_shape)
-        self.middle_shape = np.array(middle_shape)
-        self.scale = self.img_ppi * 1.0 / 500 * self.tar_shape[0] / self.middle_shape[0]
-
-        with open(pkl_path, "rb") as fp:
-            items = pickle.load(fp)
-            self.items = items[dataname]['datalist'] # 以细节点为主导
-            self.count_number = items[dataname]["count_list"]
-
-    def load_img(self, img_path):
-        img = np.asarray(cv2.imread(img_path, cv2.IMREAD_GRAYSCALE), dtype=np.float32)
-        return img
-
-    def __len__(self):
-        return self.count_number[-1]
-
-    def _processing_(self, img, minu, pose_2d):
-        rot = 0
-        shift = np.zeros(2)
-        flow = np.zeros(198)
-        center = self.tar_shape[::-1] / 2.0
-
-        # TPS deformation
-        matches = [cv2.DMatch(ii, ii, 0) for ii in range(len(flow) // 2)]
-        tps_pts, minu = fast_tps_distortion(
-            img.shape,
-            self.tar_shape,
-            flow,
-            matches,
-            minu=minu,
-            p_center=pose_2d[:2],
-            p_theta=np.deg2rad(pose_2d[2]), # in clockwise for positive
-            t_scale=self.scale,
-            t_shift=shift,
-            t_rotation=-np.deg2rad(rot),
-        )
-
-        img = cv2.remap(img, tps_pts[..., 0], tps_pts[..., 1], cv2.INTER_LINEAR, borderValue=127.5)
-
-        return img, minu, center, shift, rot
-
-    def __getitem__(self, index):
-        # parse the image_idx and the anchor_idx
-        img_idx = np.where(self.count_number > index)[0][0] - 1
-        anchor_idx = index - self.count_number[img_idx]
-        item = self.items[img_idx]
-        img = self.load_img(osp.join(self.prefix, item["img"]))
-        pose_2d = np.loadtxt(osp.join(self.prefix, item["pose_2d"]), dtype=np.float32)[anchor_idx,:] # (x, y, theta) # in clockwise
-        minu = None
-        path = "/".join(item["img"].split("/")[-3:]).split(".")[0]
-        img_r, _, _, _, _ = self._processing_(img, minu, pose_2d)
-        img_r = (img_r - 127.5) / 127.5
         return {
             "img_r": img_r[None].astype(np.float32),
             'minu_r': pose_2d,

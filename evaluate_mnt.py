@@ -19,17 +19,13 @@ from utils.get_eval_metric import *
 from fptools import uni_io
 from models.dataloader_densemnt import MntDataset, MatchDataset
 from models.model_zoo import *
-from scipy.spatial import  distance
 import pickle
 import yaml
 import queue as Queue
 import threading
 from torch.utils.data import DataLoader
 from easydict import EasyDict as edict
-import multiprocessing
-from multiprocessing import Pool
-from multiprocessing import Manager
-multiprocessing.set_start_method('spawn', force=True) 
+import os.path as osp
 import pandas
 IDX = 0
 class BackgroundGenerator(threading.Thread):
@@ -366,7 +362,7 @@ class Evaluator:
             self.model.eval() # set the model into eval mode for evaluation
             self.test_dataset = MntDataset(
                 self.prefix,
-                os.path.join("./datasets",self.eval_pickle+'.pkl'), 
+                os.path.join("./datasets",self.eval_dataset+'.pkl'), 
                 img_ppi=self.img_ppi,
                 tar_shape=self.tar_shape,
                 middle_shape=self.middle_shape,
@@ -598,7 +594,6 @@ class Evaluator:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser("Evaluation for DMD")
     parser.add_argument("--eval_dataset", "-d", type=str, required=True, default="NIST_SD27", help="The dataset for evaluation")
-    parser.add_argument("--eval_pickle", "-p", type=str, default="NIST_eval_mnt", help="The pickle file for evaluation")
     parser.add_argument("--gpus", "-g", default=[0], type=int, nargs="+")
     parser.add_argument("--extract", "-e", action="store_true")
     parser.add_argument("--binary", "-b", action="store_true")

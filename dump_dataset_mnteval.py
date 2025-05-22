@@ -9,7 +9,6 @@ import pickle
 import random
 import numpy as np
 import argparse
-
 from fptools import fp_verifinger
 area_thresh = 40000
 
@@ -46,17 +45,14 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", type=str, default="/path/to/TEST_DATA")
     args = parser.parse_args()
     # # the NIST series dataset
-    save_file = './datasets/NIST_eval_mnt.pkl'
     datasets = ['NIST_SD27', "NIST_SD4"] # 
     img_types = ['bmp', 'bmp'] #
-    NIST_Seris_dict = {}
     for dataset, img_type in zip(datasets, img_types):
         datalist = create_datalist(args.prefix, dataset, img_type)
         datalist = [dict(zip(datalist, v)) for v in zip(*datalist.values())]
-        NIST_Seris_dict[dataset] = datalist
-
-    # save the data
-    with open(save_file, "wb") as fp:
-        pickle.dump(NIST_Seris_dict, fp)
+        save_file = f'./datasets/{dataset}.pkl'
+        # save the data
+        with open(save_file, "wb") as fp:
+            pickle.dump(datalist, fp)
 
 
