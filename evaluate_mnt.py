@@ -534,7 +534,7 @@ class Evaluator:
                 gallery_mnt = item["gallery_mnt"].to(self.main_dev)
                 index_pair = item["index"]
                 start = time.time()
-                scores = calculate_score_torchB(search_feat, gallery_feat, search_mask, gallery_mask, ndim_feat=self.ndim_feat*2,  Normalize=self.Normalize, binary=self.binary, f2f_type=(2,1))
+                scores = calculate_score_torchB(search_feat, gallery_feat, search_mask, gallery_mask, ndim_feat=self.ndim_feat*2,  Normalize=self.Normalize, N_mean=5, binary=self.binary, f2f_type=(2,1))
                 if self.relax:
                     score = lsar_score_torchB(scores, search_mnt, gallery_mnt)
                 else:
