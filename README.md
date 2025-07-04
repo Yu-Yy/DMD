@@ -52,7 +52,7 @@ git clone https://github.com/youngjetduan/fptools.git
 
 ## 📥 Download Pretrained Weights
 
-Download the pretrained [model weights](https://cloud.tsinghua.edu.cn/f/fd5ca22af0eb44afa124/?dl=1) trained on NIST SD14 and place them under:
+Download the pretrained [model weights](https://cloud.tsinghua.edu.cn/f/fd5ca22af0eb44afa124/?dl=1) trained on NIST SD14 (if the weights cannot be downloaded directly, you may use the [backup link](https://drive.google.com/file/d/1iu8pbI2EjSkwOYsYczosJJDEhd1-JyzU/view?usp=drive_link) instead),  and place them under:
 
 ```
 ./logs/DMD/
