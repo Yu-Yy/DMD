@@ -23,7 +23,8 @@
 
 ## 🔍 Overview
 
-This repository contains the official implementation of our IJCB 2024 paper, **"Latent Fingerprint Matching via Dense Minutia Descriptor"**. The proposed method improves the accuracy and efficiency of latent fingerprint matching through a robust dense descriptor learned from fingerprint minutiae. 
+This repository contains the official implementation of our IJCB 2024 paper, **"Latent Fingerprint Matching via Dense Minutia Descriptor"**. The proposed method improves the accuracy and efficiency of latent fingerprint matching through a robust dense descriptor learned from fingerprint minutiae. The extended journal version named **"Minutiae-Anchored Local Dense Representation for
+Fingerprint Matching"** has been made available on arXiv and is currently under review.
 
 
 ## 🗞️ News and Updates
