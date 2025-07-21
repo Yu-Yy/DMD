@@ -25,6 +25,6 @@ prefix: /path/to/TEST_DATA
 tar_shape:
 - 128
 - 128
-eval_path: logs/DMD
-input_norm: False
+eval_path: logs/DMD++
+input_norm: True
 score_norm: True

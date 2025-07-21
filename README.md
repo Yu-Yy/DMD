@@ -23,7 +23,8 @@
 
 ## 🔍 Overview
 
-This repository contains the official implementation of our IJCB 2024 paper, **"Latent Fingerprint Matching via Dense Minutia Descriptor"**. The proposed method improves the accuracy and efficiency of latent fingerprint matching through a robust dense descriptor learned from fingerprint minutiae.
+This repository contains the official implementation of our IJCB 2024 paper, **"Latent Fingerprint Matching via Dense Minutia Descriptor"**. The proposed method improves the accuracy and efficiency of latent fingerprint matching through a robust dense descriptor learned from fingerprint minutiae. 
+
 
 ## 🗞️ News and Updates
 
@@ -31,6 +32,8 @@ This repository contains the official implementation of our IJCB 2024 paper, **"
     - Includes basic inference pipeline for DMD.
 - **[May 21, 2025]** Codebase updated.
     - Added GPU-based score computation for significantly improved speed.
+- **[July 21, 2025]** Jounel version realeased and weights updated.
+    - The extended journal paper has been made available on arXiv and is currently under review. New model weights (DMD++) have been released.
 
 ## ⚙️ Requirements
 
@@ -52,11 +55,12 @@ git clone https://github.com/youngjetduan/fptools.git
 
 ## 📥 Download Pretrained Weights
 
-Download the pretrained [model weights](https://cloud.tsinghua.edu.cn/f/fd5ca22af0eb44afa124/?dl=1) trained on NIST SD14 (if the weights cannot be downloaded directly, you may use the [backup link](https://drive.google.com/file/d/1iu8pbI2EjSkwOYsYczosJJDEhd1-JyzU/view?usp=drive_link) instead),  and place them under:
+Download the pretrained [DMD weights](https://cloud.tsinghua.edu.cn/f/fd5ca22af0eb44afa124/?dl=1) or [DMD++ weights](https://cloud.tsinghua.edu.cn/f/4b3d701bdd7e41ed887f/?dl=1) trained on NIST SD14 (if the weights cannot be downloaded directly, you may use the [DMD backup link](https://drive.google.com/file/d/1iu8pbI2EjSkwOYsYczosJJDEhd1-JyzU/view?usp=drive_link) or [DMD++ backup link](https://drive.google.com/file/d/1QFCPZ7aTHCQeIYxdz1t9l92xI9YH7qhe/view?usp=drive_link) instead),  and place them under:
 
 ```
-./logs/DMD/
+./logs/$DMDVersion/   
 ```
+
 
 ## 📁 Prepare the Dataset
 
@@ -91,7 +95,7 @@ zzzz, wwww
 ...
 ```
 
-This file is used in evaluations where explicit genuine pairs are required (e.g., CMC or TAR\@FAR metrics). All remaining combinations are considered impostor pairs by default.
+An example file about N2N Latent is placed in `datasets/N2NLatent_genuine_pairs.txt`. This file is used in evaluations where explicit genuine pairs are required (e.g., CMC or TAR\@FAR metrics). All remaining combinations are considered impostor pairs by default.
 
 You can preprocess the dataset by running:
 
@@ -104,7 +108,7 @@ python dump_dataset_mnteval.py --prefix /path/to/dataset
 Run the evaluation script:
 
 ```bash
-python evaluate_mnt.py -d $DatasetName
+python evaluate_mnt.py -d $DatasetName -d $DMDVersion
 ```
 
 ## 📄 License & Usage

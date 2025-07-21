@@ -597,13 +597,14 @@ if __name__ == '__main__':
     parser.add_argument("--gpus", "-g", default=[0], type=int, nargs="+")
     parser.add_argument("--extract", "-e", action="store_true")
     parser.add_argument("--binary", "-b", action="store_true")
+    parser.add_argument("--method", "-m", type=str, required=True, default='DMD',  help="The DMD version for evaluation")
     args = parser.parse_args()
-    yaml_path = f'DMD.yaml' 
+    yaml_path = f'{args.method}.yaml' 
     params = edict(yaml.safe_load(open(yaml_path, "r")))
     params.update(vars(args))
     logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(message)s")
     logging.info(f"loading training profile from {yaml_path}")
-    t = Evaluator(params, args.gpus, is_load=args.extract, is_relax=True, Normalize=True, Binary=args.binary) 
+    t = Evaluator(params, args.gpus, is_load=args.extract, is_relax=True, Normalize=args.score_norm, Binary=args.binary) 
     logging.info(f"Start to evaluate the dataset: {t.eval_dataset}")
     if args.extract:
         t.extract_feat() # extract the features for each patch and save them into the corresponding folder
