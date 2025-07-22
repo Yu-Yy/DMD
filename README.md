@@ -24,7 +24,7 @@
 ## 🔍 Overview
 
 This repository contains the official implementation of our IJCB 2024 paper, **"Latent Fingerprint Matching via Dense Minutia Descriptor"**. The proposed method improves the accuracy and efficiency of latent fingerprint matching through a robust dense descriptor learned from fingerprint minutiae. The extended journal version named **"Minutiae-Anchored Local Dense Representation for
-Fingerprint Matching"** has been made available on arXiv and is currently under review.
+Fingerprint Matching"** has been made available on [arXiv](https://arxiv.org/abs/2507.15297) and is currently under review.
 
 
 ## 🗞️ News and Updates
@@ -34,7 +34,7 @@ Fingerprint Matching"** has been made available on arXiv and is currently under 
 - **[May 21, 2025]** Codebase updated.
     - Added GPU-based score computation for significantly improved speed.
 - **[July 21, 2025]** Jounel version realeased and weights updated.
-    - The extended journal paper has been made available on arXiv and is currently under review. New model weights (DMD++) have been released.
+    - The extended journal paper has been made available on [arXiv](https://arxiv.org/abs/2507.15297) and is currently under review. New model weights (DMD++) have been released. FDD pipeline will be avaible at [here](https://github.com/Yu-Yy/FLARE).
 
 ## ⚙️ Requirements
 
@@ -128,4 +128,12 @@ If you find this repository helpful, please consider starring it and citing our 
   journal={arXiv preprint arXiv:2405.01199},
   year={2024}
 }
+
+@article{pan2025Minutiae,
+  title={Minutiae-Anchored Local Dense Representation for Fingerprint Matching},
+  author={Pan, Zhiyu and Guan, Xiongjun and Duan, Yongjie and Feng, Jianjiang and Zhou, Jie},
+  journal={arXiv preprint arXiv:2507.15297},
+  year={2025}
+}
+
 ```
