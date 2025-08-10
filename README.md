@@ -109,7 +109,7 @@ python dump_dataset_mnteval.py --prefix /path/to/dataset
 Run the evaluation script:
 
 ```bash
-python evaluate_mnt.py -d $DatasetName -d $DMDVersion
+python evaluate_mnt.py -d $DatasetName -m $DMDVersion
 ```
 
 ## 📄 License & Usage
