@@ -598,6 +598,7 @@ if __name__ == '__main__':
     parser.add_argument("--extract", "-e", action="store_true")
     parser.add_argument("--binary", "-b", action="store_true")
     parser.add_argument("--method", "-m", type=str, required=True, default='DMD',  help="The DMD version for evaluation")
+    parser.add_argument("--score_norm", "-sn", action="store_true", help="Whether to use score normalization or not")
     args = parser.parse_args()
     yaml_path = f'{args.method}.yaml' 
     params = edict(yaml.safe_load(open(yaml_path, "r")))
