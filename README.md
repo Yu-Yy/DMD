@@ -109,8 +109,10 @@ python dump_dataset_mnteval.py --prefix /path/to/dataset
 Run the evaluation script:
 
 ```bash
-python evaluate_mnt.py -d $DatasetName -m $DMDVersion
+python evaluate_mnt.py -d $DatasetName -m $DMDVersion -sn
 ```
+
+The `-sn` flag enables score normalization based on the overlapping area between fingerprints. This option can be flexibly enabled or disabled depending on the evaluation setting. In our original paper, this strategy was applied when evaluating minutiae extracted using VeriFinger, but was not required for minutiae extracted using FDD.
 
 ## 📄 License & Usage
 
